@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="網站維護中（Under Maintenance）。維護時間：2026/11/6 ~ 2026/11/7，造成不便，敬請見諒。">
+<meta name="theme-color" content="#060b16">
+<title>網站維護中｜Under Maintenance</title>
+<style>
+  /* ============ Design tokens ============ */
+  :root {
+    color-scheme: dark;
+
+    /* Color — deep navy / slate with warm amber service accent */
+    --bg-0: #060b16;
+    --bg-1: #0b1426;
+    --bg-2: #04070f;
+    --glow-cool: rgba(64, 106, 180, 0.26);
+    --glow-warm: rgba(240, 180, 92, 0.07);
+
+    --ink-hi: #f1f5fc;      /* heading   — contrast vs bg-0 ≈ 16:1 */
+    --ink: #b9c7dd;         /* body text — contrast vs bg-0 ≈ 9.5:1 (AA/AAA) */
+    --ink-lo: #93a5c2;      /* secondary — contrast vs bg-0 ≈ 6.4:1 (AA) */
+    --ink-faint: #64789c;   /* meta only, non-essential */
+
+    --accent: #f0b45c;          /* amber — large/bold use, ≈ 10:1 vs bg-0 */
+    --accent-bright: #fbd29a;
+    --accent-deep: #d9974a;
+    --accent-soft: rgba(240, 180, 92, 0.12);
+    --accent-line: rgba(240, 180, 92, 0.42);
+    --ring: rgba(125, 156, 205, 0.55);
+    --hairline: rgba(148, 175, 214, 0.16);
+
+    /* Type — system stacks only */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+                 "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+    --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", "Segoe UI Mono",
+                 Consolas, "Courier New", monospace;
+
+    /* Spacing scale (8px base) */
+    --space-1: 0.5rem;
+    --space-2: 1rem;
+    --space-3: 1.5rem;
+    --space-4: 2.5rem;
+    --space-5: 4rem;
+
+    --radius-pill: 999px;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* ============ Reset ============ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { height: 100%; }
+
+  body {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-sans);
+    color: var(--ink);
+    background-color: var(--bg-0);
+    background-image:
+      radial-gradient(1100px 540px at 50% -12%, var(--glow-cool), transparent 62%),
+      radial-gradient(820px 440px at 50% 114%, var(--glow-warm), transparent 60%),
+      repeating-linear-gradient(90deg,
+        rgba(148, 175, 214, 0.03) 0 1px, transparent 1px 72px),
+      linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 55%, var(--bg-2) 100%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* Fine film-grain over everything (decorative, data-URI only) */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  ::selection { background: var(--accent); color: #171006; }
+
+  /* ============ Frame corners (technical framing) ============ */
+  .corner {
+    position: fixed;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--hairline);
+    pointer-events: none;
+  }
+  .corner.tl { top: var(--space-2); left: var(--space-2); border-right: 0; border-bottom: 0; }
+  .corner.tr { top: var(--space-2); right: var(--space-2); border-left: 0; border-bottom: 0; }
+  .corner.bl { bottom: var(--space-2); left: var(--space-2); border-right: 0; border-top: 0; }
+  .corner.br { bottom: var(--space-2); right: var(--space-2); border-left: 0; border-top: 0; }
+
+  /* ============ Layout ============ */
+  .page {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-5) clamp(20px, 5vw, 48px);
+  }
+
+  .hero {
+    width: 100%;
+    max-width: 46rem;
+    text-align: center;
+  }
+
+  /* ============ Gear badge ============ */
+  .badge {
+    position: relative;
+    width: clamp(168px, 38vw, 216px);
+    height: clamp(168px, 38vw, 216px);
+    margin: 0 auto clamp(2rem, 4.5vw, 3rem);
+  }
+
+  .halo {
+    position: absolute;
+    inset: -34%;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(240, 180, 92, 0.16) 0%,
+      rgba(240, 180, 92, 0.05) 42%,
+      transparent 66%);
+    animation: breathe 6.5s ease-in-out infinite;
+  }
+
+  .gear { width: 100%; height: 100%; display: block; }
+  .gear .rot {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .ring-outer  { animation: spin 60s linear infinite; }
+  .ring-teeth  { animation: spin 34s linear infinite reverse; }
+  .ring-marker { animation: spin 18s linear infinite; }
+
+  /* Paint via CSS (var() is not reliable inside SVG presentation attrs) */
+  .ring-outer circle  { stroke: var(--ring); }
+  .ring-inner         { stroke: var(--accent-line); }
+  .ring-marker circle { fill: var(--accent); }
+
+  /* Light beam falling from badge into the text column */
+  .beam {
+    width: 1px;
+    height: clamp(44px, 7vw, 72px);
+    margin: 0 auto clamp(1.5rem, 3vw, 2rem);
+    background: linear-gradient(180deg, var(--accent-line), transparent);
+  }
+
+  /* ============ Typography hierarchy ============ */
+  .title {
+    font-size: clamp(2.35rem, 7vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.14em;
+    padding-inline-start: 0.14em; /* balance tracking for centering */
+    color: var(--ink-hi);
+    text-shadow: 0 0 56px rgba(240, 180, 92, 0.14);
+  }
+
+  .subtitle {
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: clamp(0.95rem, 2.6vw, 1.3rem);
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    padding-inline-start: 0.42em;
+    text-transform: uppercase;
+    color: var(--ink-lo);
+  }
+
+  /* ============ Maintenance-window chip ============ */
+  .window {
+    margin-top: clamp(1.75rem, 4vw, 2.5rem);
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: 0.75em;
+    row-gap: 0.4em;
+    max-width: 100%;
+    padding: 0.8em 1.5em;
+    border: 1px solid var(--accent-line);
+    border-radius: var(--radius-pill);
+    background: var(--accent-soft);
+    font-family: var(--font-mono);
+    font-size: clamp(0.9rem, 2.3vw, 1.12rem);
+    letter-spacing: 0.04em;
+    color: var(--accent-bright);
+    box-shadow:
+      0 0 0 4px rgba(240, 180, 92, 0.05),
+      0 12px 40px -18px rgba(240, 180, 92, 0.45);
+  }
+
+  .window .dot {
+    width: 0.55em;
+    height: 0.55em;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 rgba(240, 180, 92, 0.5);
+    animation: pulse 2.4s ease-out infinite;
+  }
+
+  /* ============ Notice + refresh ============ */
+  .notice {
+    margin-top: clamp(1.75rem, 4vw, 2.5rem);
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    line-height: 1.95;
+    color: var(--ink);
+  }
+
+  .refresh-row { margin-top: var(--space-3); }
+
+  .refresh {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65em;
+    padding: 0.7em 1.7em;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    font: inherit;
+    font-size: clamp(0.92rem, 2.2vw, 1rem);
+    letter-spacing: 0.28em;
+    padding-inline-start: calc(1.7em + 0.28em);
+    color: var(--ink-lo);
+    cursor: pointer;
+    transition: color 0.3s var(--ease-out),
+                border-color 0.3s var(--ease-out),
+                transform 0.3s var(--ease-out),
+                box-shadow 0.3s var(--ease-out);
+  }
+  .refresh:hover,
+  .refresh:focus-visible {
+    color: var(--accent-bright);
+    border-color: var(--accent-line);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px -14px rgba(240, 180, 92, 0.5);
+  }
+  .refresh:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .refresh:active { transform: translateY(0); }
+
+  .refresh .arrow {
+    width: 1em;
+    height: 1em;
+    flex: none;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    transition: transform 0.45s var(--ease-out);
+  }
+  .refresh:hover .arrow,
+  .refresh:focus-visible .arrow { transform: rotate(180deg); }
+
+  /* Refresh control only exists when JS can service it */
+  .needs-js { display: none; }
+  html.js .needs-js { display: flex; }
+
+  /* ============ Footer ============ */
+  .foot {
+    padding: 0 var(--space-2) clamp(1.5rem, 4vw, 2.25rem);
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: clamp(0.66rem, 1.6vw, 0.74rem);
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .foot .sep { margin: 0 0.9em; color: var(--accent-deep); }
+
+  /* ============ Entrance choreography ============ */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes spin   { to { transform: rotate(360deg); } }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.65; transform: scale(1); }
+    50%      { opacity: 1;    transform: scale(1.05); }
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(240, 180, 92, 0.5); }
+    70%  { box-shadow: 0 0 0 9px rgba(240, 180, 92, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(240, 180, 92, 0); }
+  }
+
+  .rise { opacity: 0; animation: rise 0.9s var(--ease-out) forwards; }
+  .d1 { animation-delay: 0.05s; }
+  .d2 { animation-delay: 0.18s; }
+  .d3 { animation-delay: 0.30s; }
+  .d4 { animation-delay: 0.42s; }
+  .d5 { animation-delay: 0.54s; }
+  .d6 { animation-delay: 0.66s; }
+  .d7 { animation-delay: 0.78s; }
+
+  /* ============ Motion preference ============ */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .rise { opacity: 1; }
+  }
+
+  /* Small phones: hide frame corners to keep the field clean */
+  @media (max-width: 420px) {
+    .corner { display: none; }
+  }
+</style>
+</head>
+<body>
+  <span class="corner tl" aria-hidden="true"></span>
+  <span class="corner tr" aria-hidden="true"></span>
+  <span class="corner bl" aria-hidden="true"></span>
+  <span class="corner br" aria-hidden="true"></span>
+
+  <main class="page">
+    <div class="hero">
+
+      <div class="badge rise d1" aria-hidden="true">
+        <div class="halo"></div>
+        <svg class="gear" viewBox="0 0 160 160" focusable="false">
+          <defs>
+            <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fbd29a"/>
+              <stop offset="1" stop-color="#d9974a"/>
+            </linearGradient>
+          </defs>
+          <!-- outer dashed survey ring -->
+          <g class="rot ring-outer">
+            <circle cx="80" cy="80" r="73" fill="none"
+                    stroke-width="1.5" stroke-dasharray="2 8"/>
+          </g>
+          <!-- gear teeth: dashed thick stroke reads as cogs -->
+          <g class="rot ring-teeth">
+            <circle cx="80" cy="80" r="54" fill="none"
+                    stroke="url(#metal)" stroke-width="14" stroke-dasharray="14.14 14.14"/>
+          </g>
+          <circle class="ring-inner" cx="80" cy="80" r="40" fill="none" stroke-width="1.5"/>
+          <circle cx="80" cy="80" r="33" fill="none"
+                  stroke="rgba(148,175,214,0.22)" stroke-width="1"/>
+          <!-- orbiting service marker -->
+          <g class="rot ring-marker">
+            <circle cx="80" cy="15" r="3"/>
+          </g>
+          <circle cx="80" cy="80" r="7.5" fill="none"
+                  stroke="url(#metal)" stroke-width="3"/>
+        </svg>
+      </div>
+
+      <div class="beam rise d2" aria-hidden="true"></div>
+
+      <h1 class="title rise d2">網站維護中</h1>
+      <p class="subtitle rise d3">Under Maintenance</p>
+
+      <p class="window rise d4">
+        <span class="dot" aria-hidden="true"></span>
+        <span>維護時間：<time datetime="2026-11-06">2026/11/6</time> ~ <time datetime="2026-11-07">2026/11/7</time></span>
+      </p>
+
+      <p class="notice rise d5">造成不便，敬請見諒。我們將盡快恢復服務。</p>
+
+      <p class="refresh-row needs-js rise d6">
+        <button type="button" id="refresh" class="refresh">
+          <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M20 11a8 8 0 1 0-2.34 6.06"/>
+            <path d="M20 4v7h-7"/>
+          </svg>
+          <span>重新整理</span>
+        </button>
+      </p>
+
+    </div>
+  </main>
+
+  <footer class="foot rise d7">
+    <span>System Status</span><span class="sep" aria-hidden="true">&middot;</span><span>Maintenance in progress</span>
+  </footer>
+
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      var btn = document.getElementById("refresh");
+      if (btn) {
+        btn.addEventListener("click", function () { location.reload(); });
+      }
+    })();
+  </script>
+</body>
+</html>
